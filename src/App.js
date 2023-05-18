@@ -11,17 +11,73 @@ const App = () => {
 		{itemName: "intem 3", quantity:2, isSelected:false }
 	]);
 
+	const [inputValue, setInputValue] = useState('');
+
+	const [totalCounts, setTotalCounts] = useState();
+
+	const handelAddClickButton = () =>{
+		const newItem = {
+			itemName: inputValue,
+			quantity: 1,
+			isSelected: false
+		} 
+
+		const newItems = [...items, newItem];
+
+		setItems(newItems);
+
+		setInputValue('');
+	}
+
+	const handelClickDecrement = (index) =>{
+		const newItems = [...items];
+
+		newItems[index].quantity--;
+
+		setItems(newItems);
+
+		calculateTotal();
+
+	}
+
+	const handelClickIncrement = (index) =>{
+		const newItems = [...items];
+
+		newItems[index].quantity++;
+
+		setItems(newItems);
+
+		calculateTotal();
+	}
+
+	const toggleComplete = (index) =>{
+		const newItems = [...items];
+
+		newItems[index].isSelected = !newItems[index].isSelected;
+
+		setItems(newItems);
+	}
+
+	const calculateTotal = (index)=>{
+		const totalCounts = items.reduce((total, item)=>{
+			return total + item.quantity
+		}, 0)
+
+		setTotalCounts(totalCounts);
+
+	}
+
 	return (
 		<div className='app-background'>
 			<div className='main-container'>
 				<div className='add-item-box'>
-					<input className='add-item-input' placeholder='Add an item...' />
-					<FontAwesomeIcon icon={faPlus} />
+					<input value={inputValue} onChange={(event) => setInputValue(event.target.value)} className='add-item-input' placeholder='Add an item...' />
+					<FontAwesomeIcon icon={faPlus} onClick={() => handelAddClickButton()}/>
 				</div>
 				<div className='item-list'>
 					{items.map((item, index)=>(
 						<div className='item-container'>
-						<div className='item-name'>
+						<div className='item-name' onClick={()=>toggleComplete(index)}>
 							{/* HINT: replace false with a boolean indicating the item has been completed or not */}
 							{item.isSelected ? (
 								<>
@@ -37,17 +93,17 @@ const App = () => {
 						</div>
 						<div className='quantity'>
 							<button>
-								<FontAwesomeIcon icon={faChevronLeft} />
+								<FontAwesomeIcon icon={faChevronLeft} onClick={()=>handelClickDecrement(index)}/>
 							</button>
 							<span>{item.quantity}</span>
 							<button>
-								<FontAwesomeIcon icon={faChevronRight} />
+								<FontAwesomeIcon icon={faChevronRight} onClick={()=>handelClickIncrement(index)}/>
 							</button>
 						</div>
 					</div>
 					))}
 				</div>
-				<div className='total'>Total: 6</div>
+				<div className='total'>Total: {totalCounts}</div>
 			</div>
 		</div>
 	);
